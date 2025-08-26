@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.aiprogramming</groupId>
+    <artifactId>ai-programming-java</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>AI Programming with Java</name>
+    <description>A comprehensive guide to AI and Machine Learning with Java</description>
+    <url>https://github.com/your-username/ai-programming-java</url>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        
+        <!-- AI/ML Library Versions -->
+        <dl4j.version>1.0.0-M2.1</dl4j.version>
+        <nd4j.version>1.0.0-M2.1</nd4j.version>
+        <tribuo.version>4.3.0</tribuo.version>
+        <smile.version>3.0.1</smile.version>
+        <opennlp.version>2.3.0</opennlp.version>
+        <stanford-nlp.version>4.5.4</stanford-nlp.version>
+        
+        <!-- Utility Library Versions -->
+        <commons-math.version>3.6.1</commons-math.version>
+        <commons-csv.version>1.10.0</commons-csv.version>
+        <jfreechart.version>1.5.3</jfreechart.version>
+        <jackson.version>2.15.2</jackson.version>
+        <slf4j.version>2.0.7</slf4j.version>
+        <logback.version>1.4.8</logback.version>
+        
+        <!-- Testing Versions -->
+        <junit.version>5.9.3</junit.version>
+        <mockito.version>5.3.1</mockito.version>
+        <assertj.version>3.24.2</assertj.version>
+        
+        <!-- Spring Boot Version (for deployment chapters) -->
+        <spring-boot.version>3.1.5</spring-boot.version>
+    </properties>
+
+    <modules>
+        <!-- Part I: Foundations -->
+        <module>chapter-01-introduction</module>
+        <module>chapter-02-java-fundamentals</module>
+        
+        <!-- Part II: Machine Learning -->
+        <module>chapter-03-ml-basics</module>
+        <module>chapter-04-classification</module>
+        <module>chapter-05-regression</module>
+        <module>chapter-06-unsupervised</module>
+        
+        <!-- Part III: Deep Learning -->
+        <module>chapter-07-neural-networks</module>
+        <module>chapter-08-cnns</module>
+        <module>chapter-09-rnns</module>
+        
+        <!-- Part IV: Natural Language Processing -->
+        <module>chapter-10-nlp-basics</module>
+        <module>chapter-11-transformers</module>
+        
+        <!-- Part V: Advanced Applications -->
+        <module>chapter-12-reinforcement-learning</module>
+        <module>chapter-13-computer-vision</module>
+        <module>chapter-14-recommender-systems</module>
+        <module>chapter-15-time-series</module>
+        
+        <!-- Part VI: Production & Deployment -->
+        <module>chapter-16-deployment</module>
+        <module>chapter-17-interpretability</module>
+        <module>chapter-18-automl</module>
+        <module>chapter-19-edge-ai</module>
+        <module>chapter-20-future-ai</module>
+        
+        <!-- Utilities and Common Code -->
+        <module>utils</module>
+        <module>solutions</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- DeepLearning4J and ND4J -->
+            <dependency>
+                <groupId>org.deeplearning4j</groupId>
+                <artifactId>deeplearning4j-core</artifactId>
+                <version>${dl4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.deeplearning4j</groupId>
+                <artifactId>deeplearning4j-nn</artifactId>
+                <version>${dl4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.deeplearning4j</groupId>
+                <artifactId>deeplearning4j-ui</artifactId>
+                <version>${dl4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nd4j</groupId>
+                <artifactId>nd4j-native-platform</artifactId>
+                <version>${nd4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nd4j</groupId>
+                <artifactId>nd4j-cuda-11.8-platform</artifactId>
+                <version>${nd4j.version}</version>
+            </dependency>
+            
+            <!-- Tribuo (Oracle ML Library) -->
+            <dependency>
+                <groupId>org.tribuo</groupId>
+                <artifactId>tribuo-all</artifactId>
+                <version>${tribuo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tribuo</groupId>
+                <artifactId>tribuo-core</artifactId>
+                <version>${tribuo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tribuo</groupId>
+                <artifactId>tribuo-classification</artifactId>
+                <version>${tribuo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tribuo</groupId>
+                <artifactId>tribuo-regression</artifactId>
+                <version>${tribuo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.tribuo</groupId>
+                <artifactId>tribuo-clustering</artifactId>
+                <version>${tribuo.version}</version>
+            </dependency>
+            
+            <!-- Smile (Statistical Machine Learning) -->
+            <dependency>
+                <groupId>com.github.haifengl</groupId>
+                <artifactId>smile-core</artifactId>
+                <version>${smile.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.haifengl</groupId>
+                <artifactId>smile-classification</artifactId>
+                <version>${smile.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.haifengl</groupId>
+                <artifactId>smile-regression</artifactId>
+                <version>${smile.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.haifengl</groupId>
+                <artifactId>smile-clustering</artifactId>
+                <version>${smile.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.haifengl</groupId>
+                <artifactId>smile-nlp</artifactId>
+                <version>${smile.version}</version>
+            </dependency>
+            
+            <!-- NLP Libraries -->
+            <dependency>
+                <groupId>org.apache.opennlp</groupId>
+                <artifactId>opennlp-tools</artifactId>
+                <version>${opennlp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.stanford.nlp</groupId>
+                <artifactId>stanford-corenlp</artifactId>
+                <version>${stanford-nlp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.stanford.nlp</groupId>
+                <artifactId>stanford-corenlp</artifactId>
+                <version>${stanford-nlp.version}</version>
+                <classifier>models</classifier>
+            </dependency>
+            
+            <!-- Apache Commons -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${commons-math.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${commons-csv.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.11.0</version>
+            </dependency>
+            
+            <!-- Visualization -->
+            <dependency>
+                <groupId>org.jfree</groupId>
+                <artifactId>jfreechart</artifactId>
+                <version>${jfreechart.version}</version>
+            </dependency>
+            
+            <!-- JSON Processing -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <!-- Spring Boot (for deployment chapters) -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <!-- Other Utilities -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>32.1.2-jre</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Maven Compiler Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>17</source>
+                        <target>17</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                
+                <!-- Maven Surefire Plugin for Testing -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <includes>
+                            <include>**/*Test.java</include>
+                            <include>**/*Tests.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+                
+                <!-- Maven Exec Plugin for Running Examples -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    </configuration>
+                </plugin>
+                
+                <!-- Maven Javadoc Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.5.0</version>
+                    <configuration>
+                        <source>17</source>
+                        <doclint>none</doclint>
+                    </configuration>
+                </plugin>
+                
+                <!-- Maven Source Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <!-- SpotBugs for Static Analysis -->
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>4.7.3.5</version>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <xmlOutput>true</xmlOutput>
+                    </configuration>
+                </plugin>
+                
+                <!-- Checkstyle for Code Style -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <configuration>
+                        <configLocation>checkstyle.xml</configLocation>
+                        <encoding>UTF-8</encoding>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>false</failsOnError>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        
+        <plugins>
+            <!-- Default plugins for all modules -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Profile for GPU support -->
+        <profile>
+            <id>gpu</id>
+            <properties>
+                <nd4j.backend>cuda</nd4j.backend>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.nd4j</groupId>
+                    <artifactId>nd4j-cuda-11.8-platform</artifactId>
+                    <version>${nd4j.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        
+        <!-- Profile for CPU-only -->
+        <profile>
+            <id>cpu</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <nd4j.backend>native</nd4j.backend>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.nd4j</groupId>
+                    <artifactId>nd4j-native-platform</artifactId>
+                    <version>${nd4j.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <!-- Maven Central -->
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        
+        <!-- Sonatype Snapshots (for DL4J) -->
+        <repository>
+            <id>sonatype-snapshots</id>
+            <name>Sonatype Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        
+        <!-- JCenter (for some older libraries) -->
+        <repository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <developers>
+        <developer>
+            <name>AI Programming with Java Team</name>
+            <email>contact@aiprogramming-java.com</email>
+            <organization>AI Programming with Java</organization>
+            <organizationUrl>https://github.com/your-username/ai-programming-java</organizationUrl>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/your-username/ai-programming-java.git</connection>
+        <developerConnection>scm:git:ssh://github.com:your-username/ai-programming-java.git</developerConnection>
+        <url>https://github.com/your-username/ai-programming-java/tree/main</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/your-username/ai-programming-java/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/your-username/ai-programming-java/actions</url>
+    </ciManagement>
+</project>

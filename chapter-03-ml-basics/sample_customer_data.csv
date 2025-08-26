@@ -1,0 +1,11 @@
+customerId,gender,age,location,tenure,monthlyCharges,totalCharges,contractType,paymentMethod,supportCalls,churned
+1,Male,25,urban,5,50.0,250.0,Month-to-month,Electronic check,2,No
+2,Female,45,suburban,12,120.0,1440.0,One year,Bank transfer,1,No
+3,Male,32,urban,8,75.0,600.0,Month-to-month,Credit card,4,Yes
+4,Female,28,rural,3,35.0,105.0,Month-to-month,Mailed check,0,No
+5,Male,55,suburban,24,150.0,3600.0,Two year,Bank transfer,1,No
+6,Female,38,urban,6,65.0,390.0,Month-to-month,Electronic check,3,Yes
+7,Male,42,suburban,18,95.0,1710.0,One year,Credit card,2,No
+8,Female,29,urban,2,45.0,90.0,Month-to-month,Electronic check,5,Yes
+9,Male,48,rural,15,110.0,1650.0,One year,Bank transfer,1,No
+10,Female,35,suburban,10,80.0,800.0,Month-to-month,Credit card,2,No
