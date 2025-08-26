@@ -19,6 +19,9 @@ dist/
 # Package files
 *.jar
 
+#Others
+.history/
+
 # Maven
 target/
 dist/
