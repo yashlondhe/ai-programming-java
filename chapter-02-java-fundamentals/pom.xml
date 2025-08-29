@@ -16,6 +16,11 @@
     <description>Essential Java concepts for AI development including collections, streams, and performance optimization</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.aiprogramming</groupId>
+            <artifactId>utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!-- Java utilities -->
         <dependency>
             <groupId>org.apache.commons</groupId>

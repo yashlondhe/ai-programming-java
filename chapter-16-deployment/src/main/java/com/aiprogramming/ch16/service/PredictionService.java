@@ -3,6 +3,7 @@ package com.aiprogramming.ch16.service;
 import com.aiprogramming.ch16.model.AIModel;
 import com.aiprogramming.ch16.model.ClassificationModel;
 import com.aiprogramming.ch16.model.ClassificationPrediction;
+import com.aiprogramming.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,17 @@ public class PredictionService {
      */
     public ClassificationPrediction predict(String modelId, double[] features) {
         logger.info("Making prediction with model: {}", modelId);
+        
+        // Using ValidationUtils for input validation
+        try {
+            ValidationUtils.validateNotNull(modelId, "modelId");
+            ValidationUtils.validateNonEmptyString(modelId, "modelId");
+            ValidationUtils.validateVector(features, "features");
+            ValidationUtils.validateFiniteValues(features, "features");
+        } catch (IllegalArgumentException e) {
+            logger.error("Input validation failed: {}", e.getMessage());
+            throw e;
+        }
         
         // Get the model
         Optional<AIModel> modelOpt = modelService.getModelById(modelId);

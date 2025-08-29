@@ -2,7 +2,8 @@ package com.aiprogramming.ch11;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.MatrixUtils;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.StatisticsUtils;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;

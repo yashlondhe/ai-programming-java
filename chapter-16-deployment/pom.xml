@@ -27,6 +27,13 @@
     </properties>
 
     <dependencies>
+        <!-- AI Programming Utils -->
+        <dependency>
+            <groupId>com.aiprogramming</groupId>
+            <artifactId>utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

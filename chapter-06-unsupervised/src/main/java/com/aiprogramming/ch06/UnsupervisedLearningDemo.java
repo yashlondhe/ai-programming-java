@@ -1,6 +1,7 @@
 package com.aiprogramming.ch06;
 
 import java.util.*;
+import com.aiprogramming.utils.*;
 
 /**
  * Main demo class showcasing unsupervised learning algorithms
@@ -33,6 +34,10 @@ public class UnsupervisedLearningDemo {
         List<DataPoint> dataPoints = generateSampleData(300);
         System.out.printf("Generated %d data points for clustering\n", dataPoints.size());
         
+        // Validate data using utils
+        ValidationUtils.validateNotNull(dataPoints, "dataPoints");
+        ValidationUtils.validateNonEmpty(dataPoints, "dataPoints");
+        
         // K-Means Clustering
         System.out.println("\n--- K-Means Clustering ---");
         KMeans kmeans = new KMeans(3);
@@ -53,12 +58,17 @@ public class UnsupervisedLearningDemo {
         ClusteringResult dbscanResult = dbscan.fit(dataPoints);
         dbscanResult.printStatistics();
         
-        // Compare clustering results
+        // Compare clustering results using utils
         System.out.println("\n--- Clustering Comparison ---");
         System.out.printf("K-Means Silhouette Score: %.4f\n", kmeansResult.getSilhouetteScore());
         System.out.printf("DBSCAN Silhouette Score: %.4f\n", dbscanResult.getSilhouetteScore());
         System.out.printf("K-Means Inertia: %.4f\n", kmeansResult.getInertia());
         System.out.printf("DBSCAN Inertia: %.4f\n", dbscanResult.getInertia());
+        
+        // Calculate statistics using utils
+        double[] silhouetteScores = {kmeansResult.getSilhouetteScore(), dbscanResult.getSilhouetteScore()};
+        System.out.printf("Average silhouette score: %.4f\n", StatisticsUtils.mean(silhouetteScores));
+        System.out.printf("Silhouette score variance: %.4f\n", StatisticsUtils.variance(silhouetteScores));
     }
     
     /**
@@ -72,6 +82,10 @@ public class UnsupervisedLearningDemo {
         List<DataPoint> highDimData = generateHighDimensionalData(100, 10);
         System.out.printf("Generated %d data points with %d dimensions\n", 
                          highDimData.size(), highDimData.get(0).getDimension());
+        
+        // Validate data using utils
+        ValidationUtils.validateNotNull(highDimData, "highDimData");
+        ValidationUtils.validateNonEmpty(highDimData, "highDimData");
         
         // Apply PCA
         System.out.println("\n--- PCA Dimensionality Reduction ---");
@@ -88,11 +102,19 @@ public class UnsupervisedLearningDemo {
             System.out.printf("  PC%d: %.3f\n", i + 1, explainedVariance.get(i));
         }
         
+        // Calculate cumulative explained variance using utils
+        double[] varianceArray = explainedVariance.stream().mapToDouble(Double::doubleValue).toArray();
+        double cumulativeVariance = 0.0;
+        for (double v : varianceArray) {
+            cumulativeVariance += v;
+        }
+        System.out.printf("Cumulative explained variance: %.3f\n", cumulativeVariance);
+        
         // Demonstrate inverse transform
         System.out.println("\n--- PCA Inverse Transform ---");
         List<DataPoint> reconstructedData = pca.inverseTransform(reducedData);
         
-        // Calculate reconstruction error
+        // Calculate reconstruction error using utils
         double reconstructionError = calculateReconstructionError(highDimData, reconstructedData);
         System.out.printf("Reconstruction error: %.6f\n", reconstructionError);
         
@@ -116,6 +138,10 @@ public class UnsupervisedLearningDemo {
         // Generate sample transaction data
         List<Set<String>> transactions = generateTransactionData(1000);
         System.out.printf("Generated %d transactions\n", transactions.size());
+        
+        // Validate data using utils
+        ValidationUtils.validateNotNull(transactions, "transactions");
+        ValidationUtils.validateNonEmpty(transactions, "transactions");
         
         // Show sample transactions
         System.out.println("\nSample transactions:");
@@ -142,19 +168,26 @@ public class UnsupervisedLearningDemo {
             System.out.printf("  %s\n", rules.get(i));
         }
         
-        // Analyze rule statistics
+        // Analyze rule statistics using utils
         if (!rules.isEmpty()) {
-            double avgConfidence = rules.stream()
+            double[] confidences = rules.stream()
                     .mapToDouble(Apriori.AssociationRule::getConfidence)
-                    .average()
-                    .orElse(0.0);
-            System.out.printf("\nAverage confidence: %.3f\n", avgConfidence);
+                    .toArray();
             
-            double maxConfidence = rules.stream()
-                    .mapToDouble(Apriori.AssociationRule::getConfidence)
-                    .max()
-                    .orElse(0.0);
-            System.out.printf("Maximum confidence: %.3f\n", maxConfidence);
+            System.out.printf("\nConfidence Statistics:\n");
+            System.out.printf("  Average confidence: %.3f\n", StatisticsUtils.mean(confidences));
+            
+            // Calculate max and min manually
+            double maxConfidence = confidences[0];
+            double minConfidence = confidences[0];
+            for (double conf : confidences) {
+                if (conf > maxConfidence) maxConfidence = conf;
+                if (conf < minConfidence) minConfidence = conf;
+            }
+            System.out.printf("  Maximum confidence: %.3f\n", maxConfidence);
+            System.out.printf("  Minimum confidence: %.3f\n", minConfidence);
+            System.out.printf("  Confidence variance: %.3f\n", StatisticsUtils.variance(confidences));
+            System.out.printf("  Confidence standard deviation: %.3f\n", StatisticsUtils.standardDeviation(confidences));
         }
     }
     
@@ -239,6 +272,8 @@ public class UnsupervisedLearningDemo {
      * Calculate reconstruction error between original and reconstructed data
      */
     private static double calculateReconstructionError(List<DataPoint> original, List<DataPoint> reconstructed) {
+        ValidationUtils.validateNotNull(original, "original");
+        ValidationUtils.validateNotNull(reconstructed, "reconstructed");
         if (original.size() != reconstructed.size()) {
             throw new IllegalArgumentException("Data sets must have the same size");
         }
@@ -257,6 +292,7 @@ public class UnsupervisedLearningDemo {
             }
         }
         
+        // Use utils for final calculation
         return Math.sqrt(totalError / totalFeatures);
     }
 }

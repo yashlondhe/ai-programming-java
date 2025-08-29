@@ -1,6 +1,9 @@
 package com.aiprogramming.ch18;
 
 import java.util.*;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
+import com.aiprogramming.utils.DataUtils;
 
 /**
  * Model selection using various evaluation metrics
@@ -207,12 +210,7 @@ public class ModelSelector {
     }
     
     private double calculateMSE(double[] predictions, double[] targets) {
-        double sum = 0.0;
-        for (int i = 0; i < predictions.length; i++) {
-            double diff = predictions[i] - targets[i];
-            sum += diff * diff;
-        }
-        return sum / predictions.length;
+        return DataUtils.meanSquaredError(targets, predictions);
     }
     
     private double calculateMAE(double[] predictions, double[] targets) {
@@ -224,17 +222,7 @@ public class ModelSelector {
     }
     
     private double calculateR2Score(double[] predictions, double[] targets) {
-        double meanTarget = Arrays.stream(targets).average().orElse(0.0);
-        
-        double ssRes = 0.0;
-        double ssTot = 0.0;
-        
-        for (int i = 0; i < predictions.length; i++) {
-            ssRes += Math.pow(predictions[i] - targets[i], 2);
-            ssTot += Math.pow(targets[i] - meanTarget, 2);
-        }
-        
-        return ssTot == 0 ? 0 : 1 - (ssRes / ssTot);
+        return DataUtils.rSquared(targets, predictions);
     }
     
     /**

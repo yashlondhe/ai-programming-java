@@ -1,5 +1,6 @@
 package com.aiprogramming.ch10;
 
+import com.aiprogramming.utils.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,21 @@ public class SentimentAnalysisExample {
             "Mediocre performance, could be better.",
             "Outstanding quality and great service!"
         );
+        
+        // Using StatisticsUtils for sentiment analysis statistics
+        System.out.println("=== Sentiment Statistics with Utils ===");
+        double[] sentiments = testTexts.stream()
+            .mapToDouble(text -> analyzer.predictSentiment(text))
+            .toArray();
+        
+        double meanSentiment = StatisticsUtils.mean(sentiments);
+        double stdSentiment = StatisticsUtils.standardDeviation(sentiments);
+        double skewness = StatisticsUtils.skewness(sentiments);
+        
+        System.out.printf("Mean sentiment: %.4f%n", meanSentiment);
+        System.out.printf("Sentiment std dev: %.4f%n", stdSentiment);
+        System.out.printf("Sentiment skewness: %.4f%n", skewness);
+        System.out.println();
         
         System.out.println("=== Sentiment Analysis Results ===");
         for (int i = 0; i < testTexts.size(); i++) {

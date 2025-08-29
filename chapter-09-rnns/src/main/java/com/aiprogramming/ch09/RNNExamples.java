@@ -6,6 +6,7 @@ import com.aiprogramming.ch09.core.GRUCell;
 import com.aiprogramming.ch09.applications.TextGenerator;
 import com.aiprogramming.ch09.applications.SentimentAnalyzer;
 import com.aiprogramming.ch09.applications.TimeSeriesPredictor;
+import com.aiprogramming.utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,10 @@ public class RNNExamples {
             sequence.add(input);
         }
         
+        // Validate sequence using utils
+        ValidationUtils.validateNotNull(sequence, "sequence");
+        ValidationUtils.validateNonEmpty(sequence, "sequence");
+        
         // Forward pass
         System.out.println("Input sequence:");
         for (int i = 0; i < sequence.size(); i++) {
@@ -84,6 +89,19 @@ public class RNNExamples {
         System.out.printf("\nFinal hidden state: [%.3f, %.3f, %.3f, %.3f]\n",
             rnn.getHiddenState()[0], rnn.getHiddenState()[1], 
             rnn.getHiddenState()[2], rnn.getHiddenState()[3]);
+        
+        // Calculate output statistics using utils
+        double[] outputValues = new double[outputs.size() * 2];
+        int idx = 0;
+        for (double[] output : outputs) {
+            for (double val : output) {
+                outputValues[idx++] = val;
+            }
+        }
+        
+        System.out.printf("Output Statistics:\n");
+        System.out.printf("  Mean: %.3f\n", StatisticsUtils.mean(outputValues));
+        System.out.printf("  Standard deviation: %.3f\n", StatisticsUtils.standardDeviation(outputValues));
         
         System.out.println();
     }
@@ -250,10 +268,20 @@ public class RNNExamples {
         // Generate sample time series data (sine wave with noise)
         double[] historicalData = generateSampleTimeSeries(100);
         
+        // Validate data using utils
+        ValidationUtils.validateNotNull(historicalData, "historicalData");
+        ValidationUtils.validateVector(historicalData, "historicalData");
+        
         System.out.println("Sample time series data (first 10 points):");
         for (int i = 0; i < Math.min(10, historicalData.length); i++) {
             System.out.printf("  t=%d: %.3f\n", i, historicalData[i]);
         }
+        
+        // Calculate time series statistics using utils
+        System.out.printf("\nTime Series Statistics:\n");
+        System.out.printf("  Mean: %.3f\n", StatisticsUtils.mean(historicalData));
+        System.out.printf("  Standard deviation: %.3f\n", StatisticsUtils.standardDeviation(historicalData));
+        System.out.printf("  Variance: %.3f\n", StatisticsUtils.variance(historicalData));
         
         // Train the model first
         System.out.println("\nTraining time series prediction model...");
@@ -263,10 +291,19 @@ public class RNNExamples {
         int predictionLength = 10;
         double[] predictions = predictor.predictNextValues(historicalData, predictionLength);
         
+        // Validate predictions using utils
+        ValidationUtils.validateNotNull(predictions, "predictions");
+        ValidationUtils.validateVector(predictions, "predictions");
+        
         System.out.println("\nPredicted values:");
         for (int i = 0; i < predictions.length; i++) {
             System.out.printf("  t=%d: %.3f\n", historicalData.length + i, predictions[i]);
         }
+        
+        // Calculate prediction statistics using utils
+        System.out.printf("\nPrediction Statistics:\n");
+        System.out.printf("  Mean: %.3f\n", StatisticsUtils.mean(predictions));
+        System.out.printf("  Standard deviation: %.3f\n", StatisticsUtils.standardDeviation(predictions));
         
         System.out.println();
     }

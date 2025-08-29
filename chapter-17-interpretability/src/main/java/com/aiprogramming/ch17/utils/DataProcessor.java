@@ -1,5 +1,9 @@
 package com.aiprogramming.ch17.utils;
 
+import com.aiprogramming.utils.DataUtils;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.ValidationUtils;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -50,7 +54,7 @@ public class DataProcessor {
         int numSamples = 1000;
         int numFeatures = featureNames.length;
         
-        double[][] data = new double[numSamples][numFeatures];
+        double[][] data = MatrixUtils.zeros(numSamples, numFeatures);
         
         for (int i = 0; i < numSamples; i++) {
             data[i] = generateSampleInstance();
@@ -91,6 +95,8 @@ public class DataProcessor {
      * @param instance the instance to normalize
      */
     private void normalizeInstance(double[] instance) {
+        ValidationUtils.validateVector(instance, "instance");
+        
         // Simple min-max normalization
         double min = 0.0;
         double max = 1.0;
@@ -98,6 +104,51 @@ public class DataProcessor {
         for (int i = 0; i < instance.length; i++) {
             instance[i] = Math.max(min, Math.min(max, instance[i]));
         }
+    }
+    
+    /**
+     * Load data from CSV file
+     * 
+     * @param filePath path to the CSV file
+     * @param hasHeader whether the CSV has a header row
+     * @param featureColumns indices of feature columns
+     * @param targetColumn index of target column
+     * @return pair of feature matrix and target vector
+     * @throws Exception if file cannot be read
+     */
+    public DataUtils.Pair<double[][], double[]> loadDataFromCSV(String filePath, boolean hasHeader, 
+                                                               int[] featureColumns, int targetColumn) throws Exception {
+        ValidationUtils.validateNotNull(filePath, "filePath");
+        ValidationUtils.validateNonEmptyString(filePath, "filePath");
+        ValidationUtils.validateNotNull(featureColumns, "featureColumns");
+        if (targetColumn < 0) {
+            throw new IllegalArgumentException("Target column must be non-negative");
+        }
+        
+        List<String[]> rawData = DataUtils.loadCSV(filePath, hasHeader);
+        return DataUtils.convertToNumeric(rawData, featureColumns, targetColumn);
+    }
+    
+    /**
+     * Normalize data using min-max scaling
+     * 
+     * @param data input data matrix
+     * @return normalized data matrix
+     */
+    public double[][] normalizeData(double[][] data) {
+        ValidationUtils.validateMatrix(data, "data");
+        return DataUtils.normalize(data);
+    }
+    
+    /**
+     * Standardize data using z-score normalization
+     * 
+     * @param data input data matrix
+     * @return standardized data matrix
+     */
+    public double[][] standardizeData(double[][] data) {
+        ValidationUtils.validateMatrix(data, "data");
+        return DataUtils.standardize(data);
     }
     
     /**

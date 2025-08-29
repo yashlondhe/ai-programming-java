@@ -1,5 +1,7 @@
 package com.aiprogramming.ch15;
 
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,12 +15,23 @@ public class TimeSeries {
     private String name;
     
     public TimeSeries(String name) {
+        ValidationUtils.validateNotNull(name, "name");
+        ValidationUtils.validateNonEmptyString(name, "name");
         this.name = name;
         this.timestamps = new ArrayList<>();
         this.values = new ArrayList<>();
     }
     
     public TimeSeries(String name, List<Long> timestamps, List<Double> values) {
+        ValidationUtils.validateNotNull(name, "name");
+        ValidationUtils.validateNonEmptyString(name, "name");
+        ValidationUtils.validateNotNull(timestamps, "timestamps");
+        ValidationUtils.validateNotNull(values, "values");
+        
+        if (timestamps.size() != values.size()) {
+            throw new IllegalArgumentException("Timestamps and values must have the same size");
+        }
+        
         this.name = name;
         this.timestamps = new ArrayList<>(timestamps);
         this.values = new ArrayList<>(values);
@@ -28,6 +41,7 @@ public class TimeSeries {
      * Add a data point to the time series
      */
     public void addPoint(long timestamp, double value) {
+        ValidationUtils.validateFiniteValues(new double[]{value}, "value");
         timestamps.add(timestamp);
         values.add(value);
     }
@@ -36,6 +50,9 @@ public class TimeSeries {
      * Get the value at a specific index
      */
     public double getValue(int index) {
+        if (index < 0 || index >= values.size()) {
+            throw new IllegalArgumentException("Index must be between 0 and " + (values.size() - 1));
+        }
         return values.get(index);
     }
     
@@ -43,6 +60,9 @@ public class TimeSeries {
      * Get the timestamp at a specific index
      */
     public long getTimestamp(int index) {
+        if (index < 0 || index >= timestamps.size()) {
+            throw new IllegalArgumentException("Index must be between 0 and " + (timestamps.size() - 1));
+        }
         return timestamps.get(index);
     }
     
@@ -71,6 +91,16 @@ public class TimeSeries {
      * Get a subset of the time series
      */
     public TimeSeries getSubset(int startIndex, int endIndex) {
+        if (startIndex < 0 || startIndex >= values.size()) {
+            throw new IllegalArgumentException("Start index must be between 0 and " + (values.size() - 1));
+        }
+        if (endIndex < 0 || endIndex >= values.size()) {
+            throw new IllegalArgumentException("End index must be between 0 and " + (values.size() - 1));
+        }
+        if (startIndex >= endIndex) {
+            throw new IllegalArgumentException("Start index must be less than end index");
+        }
+        
         List<Long> subTimestamps = timestamps.subList(startIndex, endIndex);
         List<Double> subValues = values.subList(startIndex, endIndex);
         return new TimeSeries(name + "_subset", subTimestamps, subValues);
@@ -80,25 +110,31 @@ public class TimeSeries {
      * Calculate the mean of all values
      */
     public double getMean() {
-        return values.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        if (values.isEmpty()) {
+            return 0.0;
+        }
+        double[] valuesArray = getValues();
+        return StatisticsUtils.mean(valuesArray);
     }
     
     /**
      * Calculate the standard deviation of all values
      */
     public double getStandardDeviation() {
-        double mean = getMean();
-        double variance = values.stream()
-                .mapToDouble(v -> Math.pow(v - mean, 2))
-                .average()
-                .orElse(0.0);
-        return Math.sqrt(variance);
+        if (values.isEmpty()) {
+            return 0.0;
+        }
+        double[] valuesArray = getValues();
+        return StatisticsUtils.standardDeviation(valuesArray);
     }
     
     /**
      * Get the minimum value
      */
     public double getMin() {
+        if (values.isEmpty()) {
+            return 0.0;
+        }
         return values.stream().mapToDouble(Double::doubleValue).min().orElse(0.0);
     }
     
@@ -106,7 +142,32 @@ public class TimeSeries {
      * Get the maximum value
      */
     public double getMax() {
+        if (values.isEmpty()) {
+            return 0.0;
+        }
         return values.stream().mapToDouble(Double::doubleValue).max().orElse(0.0);
+    }
+    
+    /**
+     * Calculate the variance of all values
+     */
+    public double getVariance() {
+        if (values.isEmpty()) {
+            return 0.0;
+        }
+        double[] valuesArray = getValues();
+        return StatisticsUtils.variance(valuesArray);
+    }
+    
+    /**
+     * Calculate the median of all values
+     */
+    public double getMedian() {
+        if (values.isEmpty()) {
+            return 0.0;
+        }
+        double[] valuesArray = getValues();
+        return StatisticsUtils.median(valuesArray);
     }
     
     public String getName() {

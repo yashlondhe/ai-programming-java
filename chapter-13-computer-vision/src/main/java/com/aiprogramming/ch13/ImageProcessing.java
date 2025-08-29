@@ -1,6 +1,9 @@
 package com.aiprogramming.ch13;
 
 import java.util.*;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Provides various image processing operations

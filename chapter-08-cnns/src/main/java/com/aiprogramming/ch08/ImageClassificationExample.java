@@ -3,6 +3,7 @@ package com.aiprogramming.ch08;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import com.aiprogramming.utils.*;
 
 /**
  * Example application demonstrating CNN for image classification
@@ -18,6 +19,12 @@ public class ImageClassificationExample {
         
         List<Tensor> testImages = createSyntheticDataset(20, 28, 28);
         List<Tensor> testLabels = createSyntheticLabels(20, 10);
+        
+        // Validate datasets using utils
+        ValidationUtils.validateNotNull(trainingImages, "trainingImages");
+        ValidationUtils.validateNotNull(testImages, "testImages");
+        ValidationUtils.validateNotNull(trainingLabels, "trainingLabels");
+        ValidationUtils.validateNotNull(testLabels, "testLabels");
         
         System.out.println("Dataset created:");
         System.out.println("- Training images: " + trainingImages.size());
@@ -50,6 +57,13 @@ public class ImageClassificationExample {
         
         System.out.println("\nTraining completed!");
         System.out.println("Final loss: " + losses.get(losses.size() - 1));
+        
+        // Calculate training statistics using utils
+        double[] lossArray = losses.stream().mapToDouble(Double::doubleValue).toArray();
+        System.out.printf("Training Statistics:\n");
+        System.out.printf("  Average loss: %.4f\n", StatisticsUtils.mean(lossArray));
+        System.out.printf("  Loss variance: %.4f\n", StatisticsUtils.variance(lossArray));
+        System.out.printf("  Loss standard deviation: %.4f\n", StatisticsUtils.standardDeviation(lossArray));
         
         // Test the network
         System.out.println("\nTesting CNN...");

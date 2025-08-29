@@ -5,6 +5,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
+import com.aiprogramming.utils.MatrixUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

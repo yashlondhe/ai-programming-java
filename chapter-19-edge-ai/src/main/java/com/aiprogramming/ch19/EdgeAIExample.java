@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Comprehensive example demonstrating Edge AI and Mobile Deployment concepts
@@ -199,16 +201,11 @@ public class EdgeAIExample {
      * Generate a sample model for demonstration
      */
     private static RealMatrix generateSampleModel() {
-        RandomDataGenerator random = new RandomDataGenerator();
         int rows = 3;
         int cols = 10;
         
-        RealMatrix weights = new Array2DRowRealMatrix(rows, cols);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                weights.setEntry(i, j, random.nextGaussian(0, 0.1));
-            }
-        }
+        double[][] weightsArray = MatrixUtils.randomNormal(rows, cols, 0.0, 0.1, 42L);
+        RealMatrix weights = new Array2DRowRealMatrix(weightsArray);
         
         return weights;
     }

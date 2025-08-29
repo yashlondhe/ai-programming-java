@@ -1,5 +1,7 @@
 package com.aiprogramming.ch15;
 
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -22,6 +24,16 @@ public class ARIMAModel {
     private double[] differencedData;
     
     public ARIMAModel(int p, int d, int q) {
+        if (p < 0) {
+            throw new IllegalArgumentException("AR order (p) must be non-negative");
+        }
+        if (d < 0) {
+            throw new IllegalArgumentException("Differencing order (d) must be non-negative");
+        }
+        if (q < 0) {
+            throw new IllegalArgumentException("MA order (q) must be non-negative");
+        }
+        
         this.p = p;
         this.d = d;
         this.q = q;
@@ -33,6 +45,11 @@ public class ARIMAModel {
      * Fit the ARIMA model to the data
      */
     public void fit(double[] data) {
+        ValidationUtils.validateVector(data, "data");
+        if (data.length < d + Math.max(p, q) + 1) {
+            throw new IllegalArgumentException("Data length must be at least " + (d + Math.max(p, q) + 1));
+        }
+        
         this.originalData = data.clone();
         
         // Step 1: Apply differencing
@@ -56,6 +73,11 @@ public class ARIMAModel {
      * Apply differencing to make the series stationary
      */
     private double[] applyDifferencing(double[] data, int order) {
+        ValidationUtils.validateVector(data, "data");
+        if (order < 0) {
+            throw new IllegalArgumentException("Order must be non-negative");
+        }
+        
         double[] result = data.clone();
         
         for (int i = 0; i < order; i++) {
@@ -73,6 +95,11 @@ public class ARIMAModel {
      * Apply inverse differencing to restore the original scale
      */
     private double[] applyInverseDifferencing(double[] data, int order) {
+        ValidationUtils.validateVector(data, "data");
+        if (order < 0) {
+            throw new IllegalArgumentException("Order must be non-negative");
+        }
+        
         double[] result = data.clone();
         
         for (int i = 0; i < order; i++) {
@@ -92,35 +119,37 @@ public class ARIMAModel {
      * Estimate AR coefficients using Yule-Walker equations
      */
     private double[] estimateARCoefficients(double[] data, int order) {
+        ValidationUtils.validateVector(data, "data");
+        if (order <= 0) {
+            throw new IllegalArgumentException("Order must be positive");
+        }
+        
         if (order == 0) return new double[0];
         
         // Calculate autocorrelations
         double[] autocorr = calculateAutocorrelations(data, order);
         
         // Build Toeplitz matrix
-        RealMatrix toeplitz = new Array2DRowRealMatrix(order, order);
+        double[][] toeplitz = new double[order][order];
         for (int i = 0; i < order; i++) {
             for (int j = 0; j < order; j++) {
-                toeplitz.setEntry(i, j, autocorr[Math.abs(i - j)]);
+                toeplitz[i][j] = autocorr[Math.abs(i - j)];
             }
         }
         
         // Build right-hand side vector
-        RealVector rhs = new ArrayRealVector(order);
+        double[] rhs = new double[order];
         for (int i = 0; i < order; i++) {
-            rhs.setEntry(i, autocorr[i + 1]);
+            rhs[i] = autocorr[i + 1];
         }
         
         // Solve Yule-Walker equations
-        DecompositionSolver solver = new LUDecomposition(toeplitz).getSolver();
-        RealVector solution = solver.solve(rhs);
+        RealMatrix matrix = new Array2DRowRealMatrix(toeplitz);
+        RealVector vector = new ArrayRealVector(rhs);
+        DecompositionSolver solver = new LUDecomposition(matrix).getSolver();
+        RealVector solution = solver.solve(vector);
         
-        double[] coefficients = new double[order];
-        for (int i = 0; i < order; i++) {
-            coefficients[i] = solution.getEntry(i);
-        }
-        
-        return coefficients;
+        return solution.toArray();
     }
     
     /**
@@ -152,29 +181,27 @@ public class ARIMAModel {
      * Calculate autocorrelations
      */
     private double[] calculateAutocorrelations(double[] data, int maxLag) {
+        ValidationUtils.validateVector(data, "data");
+        if (maxLag <= 0) {
+            throw new IllegalArgumentException("Max lag must be positive");
+        }
+        
+        double mean = StatisticsUtils.mean(data);
+        double variance = StatisticsUtils.variance(data);
+        
         double[] autocorr = new double[maxLag + 1];
-        double mean = 0.0;
+        autocorr[0] = 1.0; // Autocorrelation at lag 0 is always 1
         
-        // Calculate mean
-        for (double value : data) {
-            mean += value;
-        }
-        mean /= data.length;
-        
-        // Calculate variance
-        double variance = 0.0;
-        for (double value : data) {
-            variance += Math.pow(value - mean, 2);
-        }
-        variance /= data.length;
-        
-        // Calculate autocorrelations
-        for (int lag = 0; lag <= maxLag; lag++) {
+        for (int lag = 1; lag <= maxLag; lag++) {
             double sum = 0.0;
+            int count = 0;
+            
             for (int i = 0; i < data.length - lag; i++) {
                 sum += (data[i] - mean) * (data[i + lag] - mean);
+                count++;
             }
-            autocorr[lag] = sum / ((data.length - lag) * variance);
+            
+            autocorr[lag] = count > 0 ? sum / (count * variance) : 0.0;
         }
         
         return autocorr;

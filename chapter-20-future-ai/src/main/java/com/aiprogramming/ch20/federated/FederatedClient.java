@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Federated Learning Client
@@ -258,20 +260,17 @@ public class FederatedClient {
     public static List<DataPoint> generateSyntheticData(int numSamples, int featureDimension, 
                                                        String clientId) {
         List<DataPoint> data = new ArrayList<>();
-        RandomGenerator random = new Well19937c(clientId.hashCode());
+        long seed = clientId.hashCode();
         
         // Generate synthetic linear data with some noise
-        double[] trueWeights = new double[featureDimension];
-        for (int i = 0; i < featureDimension; i++) {
-            trueWeights[i] = (random.nextDouble() - 0.5) * 2.0;
-        }
-        double trueBias = (random.nextDouble() - 0.5) * 2.0;
+        double[] trueWeights = MatrixUtils.randomNormal(1, featureDimension, 0.0, 1.0, seed)[0];
+        double trueBias = MatrixUtils.randomNormal(1, 1, 0.0, 1.0, seed)[0][0];
+        
+        // Generate features using utils
+        double[][] featuresMatrix = MatrixUtils.randomNormal(numSamples, featureDimension, 0.0, 1.0, seed);
         
         for (int i = 0; i < numSamples; i++) {
-            double[] features = new double[featureDimension];
-            for (int j = 0; j < featureDimension; j++) {
-                features[j] = random.nextDouble() * 2.0 - 1.0;
-            }
+            double[] features = featuresMatrix[i];
             
             // Calculate true label
             double trueValue = 0.0;
@@ -281,7 +280,7 @@ public class FederatedClient {
             trueValue += trueBias;
             
             // Add noise and convert to binary classification
-            double noise = random.nextGaussian() * 0.1;
+            double noise = MatrixUtils.randomNormal(1, 1, 0.0, 0.1, seed + i)[0][0];
             double label = (trueValue + noise > 0) ? 1.0 : 0.0;
             
             data.add(new DataPoint(features, label));

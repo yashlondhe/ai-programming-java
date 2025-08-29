@@ -6,6 +6,9 @@ import com.aiprogramming.ch14.content.FeatureVector;
 import com.aiprogramming.ch14.core.Rating;
 import com.aiprogramming.ch14.core.RecommendationResult;
 import com.aiprogramming.ch14.hybrid.HybridRecommender;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
+import com.aiprogramming.utils.DataUtils;
 
 import java.util.*;
 

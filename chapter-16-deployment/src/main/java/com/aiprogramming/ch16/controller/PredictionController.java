@@ -3,6 +3,7 @@ package com.aiprogramming.ch16.controller;
 import com.aiprogramming.ch16.model.ClassificationPrediction;
 import com.aiprogramming.ch16.model.ModelStats;
 import com.aiprogramming.ch16.service.PredictionService;
+import com.aiprogramming.utils.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,23 +92,24 @@ public class PredictionController {
         logger.info("Making prediction with model: {}", modelId);
         
         try {
-            // Validate input
-            if (request.getFeatures() == null) {
-                return ResponseEntity.badRequest().build();
-            }
+            // Validate input using ValidationUtils
+            ValidationUtils.validateNotNull(modelId, "modelId");
+            ValidationUtils.validateNonEmptyString(modelId, "modelId");
+            ValidationUtils.validateNotNull(request, "request");
+            ValidationUtils.validateNotNull(request.getFeatures(), "features");
+            ValidationUtils.validateVector(request.getFeatures(), "features");
+            ValidationUtils.validateFiniteValues(request.getFeatures(), "features");
 
             // Make prediction
             ClassificationPrediction prediction = predictionService.predict(modelId, request.getFeatures());
+            
             return ResponseEntity.ok(prediction);
             
         } catch (IllegalArgumentException e) {
-            logger.error("Invalid prediction request: {}", e.getMessage());
+            logger.error("Invalid input for prediction: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
-        } catch (IllegalStateException e) {
-            logger.error("Model not ready for prediction: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         } catch (Exception e) {
-            logger.error("Prediction failed for model: {}", modelId, e);
+            logger.error("Error making prediction: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

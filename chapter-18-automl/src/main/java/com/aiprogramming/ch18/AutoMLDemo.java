@@ -1,6 +1,9 @@
 package com.aiprogramming.ch18;
 
 import java.util.*;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Comprehensive demonstration of AutoML and Neural Architecture Search
@@ -136,16 +139,7 @@ public class AutoMLDemo {
      * Generate sample features
      */
     private static double[][] generateSampleData(int numSamples, int numFeatures) {
-        Random random = new Random(42);
-        double[][] features = new double[numSamples][numFeatures];
-        
-        for (int i = 0; i < numSamples; i++) {
-            for (int j = 0; j < numFeatures; j++) {
-                features[i][j] = random.nextGaussian();
-            }
-        }
-        
-        return features;
+        return MatrixUtils.randomNormal(numSamples, numFeatures, 0.0, 1.0, 42L);
     }
     
     /**

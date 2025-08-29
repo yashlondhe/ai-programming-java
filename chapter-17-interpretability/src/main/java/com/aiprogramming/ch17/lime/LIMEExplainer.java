@@ -1,6 +1,8 @@
 package com.aiprogramming.ch17.lime;
 
 import com.aiprogramming.ch17.utils.ModelWrapper;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.ValidationUtils;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -32,6 +34,13 @@ public class LIMEExplainer {
      * @param featureNames names of the features
      */
     public LIMEExplainer(ModelWrapper model, double[][] trainingData, String[] featureNames) {
+        ValidationUtils.validateNotNull(model, "model");
+        ValidationUtils.validateMatrix(trainingData, "trainingData");
+        ValidationUtils.validateNotNull(featureNames, "featureNames");
+        if (trainingData[0].length != featureNames.length) {
+            throw new IllegalArgumentException("Training data features and feature names must have the same length");
+        }
+        
         this.model = model;
         this.trainingData = trainingData;
         this.featureNames = featureNames;
@@ -47,6 +56,11 @@ public class LIMEExplainer {
      * @return map of feature names to their contribution scores
      */
     public Map<String, Double> explain(double[] instance) {
+        ValidationUtils.validateVector(instance, "instance");
+        if (instance.length != featureNames.length) {
+            throw new IllegalArgumentException("Instance must have " + featureNames.length + " features");
+        }
+        
         try {
             // Generate perturbed samples around the instance
             double[][] perturbedSamples = generatePerturbedSamples(instance);
@@ -84,7 +98,9 @@ public class LIMEExplainer {
      * Generate perturbed samples around the given instance
      */
     private double[][] generatePerturbedSamples(double[] instance) {
-        double[][] samples = new double[numSamples][instance.length];
+        ValidationUtils.validateVector(instance, "instance");
+        
+        double[][] samples = MatrixUtils.zeros(numSamples, instance.length);
         
         // First sample is the original instance
         samples[0] = instance.clone();
@@ -98,20 +114,17 @@ public class LIMEExplainer {
     }
     
     /**
-     * Perturb a single instance by randomly modifying features
+     * Perturb a single instance by randomly setting some features to zero
      */
     private double[] perturbInstance(double[] instance) {
+        ValidationUtils.validateVector(instance, "instance");
+        
         double[] perturbed = instance.clone();
         
-        // Randomly perturb features
-        for (int j = 0; j < instance.length; j++) {
-            if (random.nextDouble() < 0.5) { // 50% chance to perturb each feature
-                // Add random noise
-                double noise = random.nextGaussian() * 0.1;
-                perturbed[j] += noise;
-                
-                // Ensure values stay within reasonable bounds
-                perturbed[j] = Math.max(0, Math.min(1, perturbed[j]));
+        // Randomly set some features to zero (simulating feature removal)
+        for (int i = 0; i < perturbed.length; i++) {
+            if (random.nextDouble() < 0.5) {
+                perturbed[i] = 0.0;
             }
         }
         
@@ -119,16 +132,21 @@ public class LIMEExplainer {
     }
     
     /**
-     * Calculate distances between original instance and perturbed samples
+     * Calculate Euclidean distances between the original instance and perturbed samples
      */
     private double[] calculateDistances(double[] instance, double[][] samples) {
+        ValidationUtils.validateVector(instance, "instance");
+        ValidationUtils.validateMatrix(samples, "samples");
+        if (instance.length != samples[0].length) {
+            throw new IllegalArgumentException("Instance and samples must have the same number of features");
+        }
+        
         double[] distances = new double[samples.length];
         
         for (int i = 0; i < samples.length; i++) {
             double distance = 0.0;
             for (int j = 0; j < instance.length; j++) {
-                double diff = instance[j] - samples[i][j];
-                distance += diff * diff;
+                distance += Math.pow(instance[j] - samples[i][j], 2);
             }
             distances[i] = Math.sqrt(distance);
         }
@@ -137,13 +155,16 @@ public class LIMEExplainer {
     }
     
     /**
-     * Calculate weights based on distances using exponential kernel
+     * Calculate weights based on distances using a kernel function
      */
     private double[] calculateWeights(double[] distances) {
+        ValidationUtils.validateVector(distances, "distances");
+        
         double[] weights = new double[distances.length];
         
         for (int i = 0; i < distances.length; i++) {
-            weights[i] = Math.exp(-distances[i] * distances[i] / (2 * kernelWidth * kernelWidth));
+            // Use exponential kernel: exp(-distance^2 / kernelWidth^2)
+            weights[i] = Math.exp(-Math.pow(distances[i] / kernelWidth, 2));
         }
         
         return weights;

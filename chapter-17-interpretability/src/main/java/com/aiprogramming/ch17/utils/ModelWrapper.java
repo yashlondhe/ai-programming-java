@@ -1,5 +1,8 @@
 package com.aiprogramming.ch17.utils;
 
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 import java.util.Random;
 
 /**
@@ -30,9 +33,7 @@ public class ModelWrapper {
      * @param trainingData training dataset
      */
     public void trainModel(double[][] trainingData) {
-        if (trainingData == null || trainingData.length == 0) {
-            throw new IllegalArgumentException("Training data cannot be null or empty");
-        }
+        ValidationUtils.validateMatrix(trainingData, "trainingData");
         
         int numFeatures = trainingData[0].length;
         this.weights = new double[numFeatures];
@@ -54,6 +55,8 @@ public class ModelWrapper {
             double totalLoss = 0.0;
             
             for (double[] instance : trainingData) {
+                ValidationUtils.validateVector(instance, "instance");
+                
                 // Forward pass (calculate prediction without using predict method)
                 double prediction = bias;
                 for (int i = 0; i < weights.length; i++) {
@@ -98,34 +101,30 @@ public class ModelWrapper {
      */
     public double predict(double[] instance) {
         if (!isTrained) {
-            System.err.println("Predict called but model is not trained!");
             throw new IllegalStateException("Model must be trained before making predictions");
         }
         
-        if (instance == null || instance.length != weights.length) {
+        ValidationUtils.validateVector(instance, "instance");
+        if (instance.length != weights.length) {
             throw new IllegalArgumentException("Instance must have " + weights.length + " features");
         }
         
-        // Linear combination
         double prediction = bias;
         for (int i = 0; i < weights.length; i++) {
             prediction += weights[i] * instance[i];
         }
         
-        // Apply sigmoid activation for classification-like output
         return sigmoid(prediction);
     }
     
     /**
      * Make predictions for multiple instances
      * 
-     * @param instances array of input features
+     * @param instances input features matrix
      * @return array of predictions
      */
-    public double[] predict(double[][] instances) {
-        if (instances == null || instances.length == 0) {
-            throw new IllegalArgumentException("Instances cannot be null or empty");
-        }
+    public double[] predictBatch(double[][] instances) {
+        ValidationUtils.validateMatrix(instances, "instances");
         
         double[] predictions = new double[instances.length];
         for (int i = 0; i < instances.length; i++) {
@@ -138,30 +137,67 @@ public class ModelWrapper {
     /**
      * Get feature importance scores
      * 
-     * @return array of feature importance scores
+     * @return array of importance scores
      */
     public double[] getFeatureImportance() {
         if (!isTrained) {
             throw new IllegalStateException("Model must be trained before getting feature importance");
         }
         
-        // For linear models, feature importance is proportional to absolute weight values
+        // Simple feature importance based on absolute weight values
         double[] importance = new double[weights.length];
-        double maxWeight = 0.0;
-        
         for (int i = 0; i < weights.length; i++) {
             importance[i] = Math.abs(weights[i]);
-            maxWeight = Math.max(maxWeight, importance[i]);
         }
         
-        // Normalize to [0, 1]
-        if (maxWeight > 0) {
+        // Normalize importance scores to sum to 1
+        double sum = 0.0;
+        for (double value : importance) {
+            sum += value;
+        }
+        if (sum > 0) {
             for (int i = 0; i < importance.length; i++) {
-                importance[i] /= maxWeight;
+                importance[i] /= sum;
             }
         }
         
         return importance;
+    }
+    
+    /**
+     * Get model performance metrics
+     * 
+     * @param testData test dataset
+     * @param testLabels true labels
+     * @return array with [accuracy, mse]
+     */
+    public double[] getPerformance(double[][] testData, double[] testLabels) {
+        ValidationUtils.validateMatrix(testData, "testData");
+        ValidationUtils.validateVector(testLabels, "testLabels");
+        if (testData.length != testLabels.length) {
+            throw new IllegalArgumentException("Test data and test labels must have the same length");
+        }
+        
+        double[] predictions = predictBatch(testData);
+        
+        // Calculate accuracy
+        int correct = 0;
+        for (int i = 0; i < predictions.length; i++) {
+            if ((predictions[i] > 0.5 && testLabels[i] > 0.5) || 
+                (predictions[i] <= 0.5 && testLabels[i] <= 0.5)) {
+                correct++;
+            }
+        }
+        double accuracy = (double) correct / predictions.length;
+        
+        // Calculate mean squared error
+        double mse = 0.0;
+        for (int i = 0; i < predictions.length; i++) {
+            mse += Math.pow(predictions[i] - testLabels[i], 2);
+        }
+        mse /= predictions.length;
+        
+        return new double[]{accuracy, mse};
     }
     
     /**

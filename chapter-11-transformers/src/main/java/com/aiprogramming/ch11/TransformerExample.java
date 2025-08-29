@@ -2,6 +2,9 @@ package com.aiprogramming.ch11;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -49,12 +52,15 @@ public class TransformerExample {
         RealMatrix encoderInput = new Array2DRowRealMatrix(1, 5);
         RealMatrix decoderInput = new Array2DRowRealMatrix(1, 4);
         
-        // Fill with random token IDs
+        // Fill with random token IDs using MatrixUtils
+        double[][] randomTokens = MatrixUtils.random(1, 5, 0, vocabSize, 42);
         for (int i = 0; i < 5; i++) {
-            encoderInput.setEntry(0, i, (int)(Math.random() * vocabSize));
+            encoderInput.setEntry(0, i, (int)randomTokens[0][i]);
         }
+        
+        double[][] randomDecTokens = MatrixUtils.random(1, 4, 0, vocabSize, 43);
         for (int i = 0; i < 4; i++) {
-            decoderInput.setEntry(0, i, (int)(Math.random() * vocabSize));
+            decoderInput.setEntry(0, i, (int)randomDecTokens[0][i]);
         }
         
         // Create masks

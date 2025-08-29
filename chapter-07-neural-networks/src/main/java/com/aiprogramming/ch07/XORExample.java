@@ -1,5 +1,6 @@
 package com.aiprogramming.ch07;
 
+import com.aiprogramming.utils.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +27,15 @@ public class XORExample {
         
         // Create neural network
         NeuralNetwork network = new NeuralNetwork();
+        
+        // Using MatrixUtils for weight initialization demonstration
+        System.out.println("Matrix Operations with Utils:");
+        double[][] weights1 = MatrixUtils.randomNormal(2, 4, 0.0, 0.1, 42L);
+        double[][] weights2 = MatrixUtils.randomNormal(4, 1, 0.0, 0.1, 43L);
+        
+        System.out.println("Weight matrices initialized with utils:");
+        DataUtils.printMatrix(weights1, "Hidden Layer Weights");
+        DataUtils.printMatrix(weights2, "Output Layer Weights");
         
         // Add layers
         network.addLayer(new DenseLayer(2, 4, new ReLU())); // Hidden layer

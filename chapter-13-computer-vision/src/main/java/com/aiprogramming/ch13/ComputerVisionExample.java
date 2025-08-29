@@ -1,6 +1,9 @@
 package com.aiprogramming.ch13;
 
 import java.util.List;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Comprehensive example demonstrating computer vision algorithms
@@ -55,8 +58,8 @@ public class ComputerVisionExample {
                     value = 200.0; // Bright circle
                 }
                 
-                // Add some noise
-                value += (Math.random() - 0.5) * 20.0;
+                // Add some noise using MatrixUtils for consistent random generation
+                value += (MatrixUtils.random(1, 1, -0.5, 0.5, 42)[0][0]) * 20.0;
                 
                 image.setGrayscalePixel(x, y, Math.max(0, Math.min(255, value)));
             }

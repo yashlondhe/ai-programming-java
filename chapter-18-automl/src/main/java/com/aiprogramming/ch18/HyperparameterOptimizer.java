@@ -3,6 +3,7 @@ package com.aiprogramming.ch18;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Hyperparameter optimization using various algorithms

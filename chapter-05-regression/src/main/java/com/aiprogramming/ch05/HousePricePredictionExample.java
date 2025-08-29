@@ -1,5 +1,6 @@
 package com.aiprogramming.ch05;
 
+import com.aiprogramming.utils.*;
 import java.util.*;
 
 /**
@@ -61,6 +62,19 @@ public class HousePricePredictionExample {
             // Evaluate performance
             RegressionMetrics metrics = evaluator.evaluate(actuals, predictions);
             metrics.printMetrics();
+            
+            // Using DataUtils for evaluation metrics
+            double[] actualsArray = actuals.stream().mapToDouble(Double::doubleValue).toArray();
+            double[] predictionsArray = predictions.stream().mapToDouble(Double::doubleValue).toArray();
+            
+            double mseFromUtils = DataUtils.meanSquaredError(actualsArray, predictionsArray);
+            double rmseFromUtils = DataUtils.rootMeanSquaredError(actualsArray, predictionsArray);
+            double rSquaredFromUtils = DataUtils.rSquared(actualsArray, predictionsArray);
+            
+            System.out.println("Metrics (using utils):");
+            System.out.printf("  MSE: %.2f%n", mseFromUtils);
+            System.out.printf("  RMSE: %.2f%n", rmseFromUtils);
+            System.out.printf("  R²: %.4f%n", rSquaredFromUtils);
             
             System.out.printf("Training time: %d ms%n", trainTime);
             System.out.printf("Prediction time: %d ms%n", predictTime);

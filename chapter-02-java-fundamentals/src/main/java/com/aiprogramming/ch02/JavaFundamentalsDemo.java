@@ -1,5 +1,6 @@
 package com.aiprogramming.ch02;
 
+import com.aiprogramming.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,11 @@ public class JavaFundamentalsDemo {
         double mean = sum / featureVector.size();
         logger.info("   Mean (traditional): {}", String.format("%.2f", mean));
         
+        // Calculate mean using StatisticsUtils
+        double[] featureArray = featureVector.stream().mapToDouble(Double::doubleValue).toArray();
+        double meanFromUtils = StatisticsUtils.mean(featureArray);
+        logger.info("   Mean (using utils): {}", String.format("%.2f", meanFromUtils));
+        
         // 2. Sets for unique elements (e.g., unique classes, features)
         logger.info("\n2. Sets for Unique Elements:");
         Set<String> uniqueClasses = new HashSet<>(Arrays.asList("cat", "dog", "cat", "bird", "dog"));
@@ -90,6 +96,16 @@ public class JavaFundamentalsDemo {
         for (double[] row : matrix) {
             logger.info("   {}", Arrays.toString(row));
         }
+        
+        // Using MatrixUtils for matrix operations
+        logger.info("\n6. Matrix Operations with Utils:");
+        double[][] identityMatrix = MatrixUtils.identity(3);
+        logger.info("   Identity matrix:");
+        DataUtils.printMatrix(identityMatrix, "Identity");
+        
+        double[][] randomMatrix = MatrixUtils.random(2, 3, 0.0, 1.0, 42L);
+        logger.info("   Random matrix (2x3):");
+        DataUtils.printMatrix(randomMatrix, "Random");
     }
     
     /**
@@ -183,20 +199,35 @@ public class JavaFundamentalsDemo {
         // 2. Matrix addition
         logger.info("\n2. Matrix Addition:");
         double[][] sumMatrix = addMatrices(matrixA, matrixB);
-        logger.info("   A + B:");
+        logger.info("   A + B (manual):");
         printMatrix(sumMatrix);
+        
+        // Using MatrixUtils for addition
+        double[][] sumMatrixUtils = MatrixUtils.add(matrixA, matrixB);
+        logger.info("   A + B (using utils):");
+        DataUtils.printMatrix(sumMatrixUtils, "Sum");
         
         // 3. Matrix multiplication
         logger.info("\n3. Matrix Multiplication:");
         double[][] productMatrix = multiplyMatrices(matrixA, matrixB);
-        logger.info("   A × B:");
+        logger.info("   A × B (manual):");
         printMatrix(productMatrix);
+        
+        // Using MatrixUtils for multiplication
+        double[][] productMatrixUtils = MatrixUtils.multiply(matrixA, matrixB);
+        logger.info("   A × B (using utils):");
+        DataUtils.printMatrix(productMatrixUtils, "Product");
         
         // 4. Transpose operation
         logger.info("\n4. Matrix Transpose:");
         double[][] transposeMatrix = transposeMatrix(matrixA);
-        logger.info("   A^T:");
+        logger.info("   A^T (manual):");
         printMatrix(transposeMatrix);
+        
+        // Using MatrixUtils for transpose
+        double[][] transposeMatrixUtils = MatrixUtils.transpose(matrixA);
+        logger.info("   A^T (using utils):");
+        DataUtils.printMatrix(transposeMatrixUtils, "Transpose");
         
         // 5. Vector operations
         logger.info("\n5. Vector Operations:");
@@ -204,7 +235,11 @@ public class JavaFundamentalsDemo {
         double[] vector2 = {4.0, 5.0, 6.0};
         
         double dotProduct = dotProduct(vector1, vector2);
-        logger.info("   Dot product: {}", String.format("%.2f", dotProduct));
+        logger.info("   Dot product (manual): {}", String.format("%.2f", dotProduct));
+        
+        // Using MatrixUtils for dot product
+        double dotProductUtils = MatrixUtils.dotProduct(vector1, vector2);
+        logger.info("   Dot product (using utils): {}", String.format("%.2f", dotProductUtils));
         
         double[] crossProduct = crossProduct(vector1, vector2);
         logger.info("   Cross product: {}", Arrays.toString(crossProduct));
@@ -294,6 +329,18 @@ public class JavaFundamentalsDemo {
             validateFeatureVector(new double[]{1.0, 2.0, -1.0, 4.0});
         } catch (InvalidFeatureVectorException e) {
             logger.error("   Feature vector validation failed: {}", e.getMessage());
+        }
+        
+        // Using ValidationUtils
+        logger.info("\n2. Validation with Utils:");
+        try {
+            double[] testVector = {1.0, 2.0, 3.0};
+            ValidationUtils.validateVector(testVector, "testVector");
+            ValidationUtils.validatePositive(0.5, "probability");
+            ValidationUtils.validateRange(0.75, 0.0, 1.0, "normalized_value");
+            logger.info("   All validations passed!");
+        } catch (IllegalArgumentException e) {
+            logger.error("   Validation failed: {}", e.getMessage());
         }
         
         // 2. Resource management with try-with-resources

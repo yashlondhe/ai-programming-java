@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Model compression utilities for edge AI deployment

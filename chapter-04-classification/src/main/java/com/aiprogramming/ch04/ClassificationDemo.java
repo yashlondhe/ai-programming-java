@@ -1,5 +1,6 @@
 package com.aiprogramming.ch04;
 
+import com.aiprogramming.utils.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,17 @@ public class ClassificationDemo {
         
         double accuracy = (double) correct / testData.size();
         System.out.printf("KNN Accuracy: %.2f%%%n", accuracy * 100);
+        
+        // Using DataUtils for accuracy calculation
+        double[] trueLabels = testData.stream()
+            .mapToDouble(point -> point.getLabel().equals("positive") ? 1.0 : 0.0)
+            .toArray();
+        double[] predictedLabels = testData.stream()
+            .mapToDouble(point -> knn.predict(point.getFeatures()).equals("positive") ? 1.0 : 0.0)
+            .toArray();
+        
+        double accuracyFromUtils = DataUtils.accuracy(trueLabels, predictedLabels);
+        System.out.printf("KNN Accuracy (using utils): %.2f%%%n", accuracyFromUtils * 100);
         System.out.println();
     }
     
@@ -111,6 +123,18 @@ public class ClassificationDemo {
     public static void demonstrateDecisionTree() {
         System.out.println("3. Decision Tree Classification");
         System.out.println("===============================");
+        
+        // Using MatrixUtils for feature matrix operations
+        System.out.println("Feature Matrix Operations with Utils:");
+        double[][] featureMatrix = {
+            {1.0, 2.0, 3.0},
+            {4.0, 5.0, 6.0},
+            {7.0, 8.0, 9.0}
+        };
+        
+        double[][] normalizedFeatures = DataUtils.normalize(featureMatrix);
+        System.out.println("Normalized feature matrix:");
+        DataUtils.printMatrix(normalizedFeatures, "Normalized Features");
         
         // Create sample dataset
         List<ClassificationDataPoint> trainingData = createSampleClassificationData();

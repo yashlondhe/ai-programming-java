@@ -1,5 +1,7 @@
 package com.aiprogramming.ch15;
 
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
@@ -12,8 +14,12 @@ public class MovingAverage {
      * Calculates the average of the last n values
      */
     public static double[] simpleMovingAverage(double[] data, int windowSize) {
-        if (windowSize <= 0 || windowSize > data.length) {
-            throw new IllegalArgumentException("Invalid window size: " + windowSize);
+        ValidationUtils.validateVector(data, "data");
+        if (windowSize <= 0) {
+            throw new IllegalArgumentException("Window size must be positive");
+        }
+        if (windowSize > data.length) {
+            throw new IllegalArgumentException("Window size cannot be larger than data length");
         }
         
         double[] result = new double[data.length];
@@ -40,8 +46,12 @@ public class MovingAverage {
      * Gives more weight to recent values
      */
     public static double[] weightedMovingAverage(double[] data, int windowSize) {
-        if (windowSize <= 0 || windowSize > data.length) {
-            throw new IllegalArgumentException("Invalid window size: " + windowSize);
+        ValidationUtils.validateVector(data, "data");
+        if (windowSize <= 0) {
+            throw new IllegalArgumentException("Window size must be positive");
+        }
+        if (windowSize > data.length) {
+            throw new IllegalArgumentException("Window size cannot be larger than data length");
         }
         
         double[] result = new double[data.length];
@@ -70,9 +80,8 @@ public class MovingAverage {
      * Gives exponentially decreasing weight to older values
      */
     public static double[] exponentialMovingAverage(double[] data, double alpha) {
-        if (alpha < 0 || alpha > 1) {
-            throw new IllegalArgumentException("Alpha must be between 0 and 1: " + alpha);
-        }
+        ValidationUtils.validateVector(data, "data");
+        ValidationUtils.validateRange(alpha, 0.0, 1.0, "alpha");
         
         double[] result = new double[data.length];
         
@@ -92,6 +101,9 @@ public class MovingAverage {
      * Reduces lag by applying EMA twice
      */
     public static double[] doubleExponentialMovingAverage(double[] data, double alpha) {
+        ValidationUtils.validateVector(data, "data");
+        ValidationUtils.validateRange(alpha, 0.0, 1.0, "alpha");
+        
         double[] ema1 = exponentialMovingAverage(data, alpha);
         double[] ema2 = exponentialMovingAverage(ema1, alpha);
         
@@ -108,6 +120,9 @@ public class MovingAverage {
      * Further reduces lag by applying EMA three times
      */
     public static double[] tripleExponentialMovingAverage(double[] data, double alpha) {
+        ValidationUtils.validateVector(data, "data");
+        ValidationUtils.validateRange(alpha, 0.0, 1.0, "alpha");
+        
         double[] ema1 = exponentialMovingAverage(data, alpha);
         double[] ema2 = exponentialMovingAverage(ema1, alpha);
         double[] ema3 = exponentialMovingAverage(ema2, alpha);
@@ -125,6 +140,13 @@ public class MovingAverage {
      * Adjusts smoothing based on market volatility
      */
     public static double[] adaptiveMovingAverage(double[] data, int fastPeriod, int slowPeriod) {
+        ValidationUtils.validateVector(data, "data");
+        if (fastPeriod <= 0) {
+            throw new IllegalArgumentException("Fast period must be positive");
+        }
+        if (slowPeriod <= 0) {
+            throw new IllegalArgumentException("Slow period must be positive");
+        }
         if (fastPeriod >= slowPeriod) {
             throw new IllegalArgumentException("Fast period must be less than slow period");
         }
@@ -159,9 +181,10 @@ public class MovingAverage {
      * Calculate the optimal alpha for EMA based on data characteristics
      */
     public static double calculateOptimalAlpha(double[] data) {
-        DescriptiveStatistics stats = new DescriptiveStatistics(data);
-        double stdDev = stats.getStandardDeviation();
-        double mean = stats.getMean();
+        ValidationUtils.validateVector(data, "data");
+        
+        double stdDev = StatisticsUtils.standardDeviation(data);
+        double mean = StatisticsUtils.mean(data);
         
         // Simple heuristic: higher volatility -> higher alpha
         double coefficientOfVariation = stdDev / mean;

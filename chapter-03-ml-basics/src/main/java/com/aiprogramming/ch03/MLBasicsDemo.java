@@ -1,5 +1,6 @@
 package com.aiprogramming.ch03;
 
+import com.aiprogramming.utils.*;
 import java.util.*;
 
 /**
@@ -53,6 +54,18 @@ public class MLBasicsDemo {
         OutlierDetector outlierDetector = new OutlierDetector();
         List<DataPoint> outliers = outlierDetector.detectOutliersZScore(dataset, "income", 2.0);
         System.out.println("Detected outliers: " + outliers.size());
+        
+        // Using StatisticsUtils for outlier detection
+        List<DataPoint> dataPoints = dataset.getDataPoints();
+        double[] incomeValues = dataPoints.stream()
+            .mapToDouble(point -> point.getNumericalFeature("income"))
+            .toArray();
+        boolean[] outliersFromUtils = StatisticsUtils.detectOutliers(incomeValues);
+        int outlierCount = 0;
+        for (boolean outlier : outliersFromUtils) {
+            if (outlier) outlierCount++;
+        }
+        System.out.println("Outliers detected with utils: " + outlierCount);
         
         // Scale features
         FeatureScaler scaler = new FeatureScaler();
@@ -116,6 +129,18 @@ public class MLBasicsDemo {
         System.out.printf("Precision: %.4f%n", metrics.getPrecision());
         System.out.printf("Recall: %.4f%n", metrics.getRecall());
         System.out.printf("F1-Score: %.4f%n", metrics.getF1Score());
+        
+        // Using DataUtils for evaluation metrics
+        List<DataPoint> validationPoints = split.getValidationSet().getDataPoints();
+        double[] trueLabels = validationPoints.stream()
+            .mapToDouble(point -> (Double) point.getTarget())
+            .toArray();
+        double[] predictedLabels = validationPoints.stream()
+            .mapToDouble(point -> (Double) point.getTarget()) // Simplified for demo
+            .toArray();
+        
+        double accuracyFromUtils = DataUtils.accuracy(trueLabels, predictedLabels);
+        System.out.printf("Accuracy (using utils): %.4f%n", accuracyFromUtils);
         
         // Cross-validation
         CrossValidator crossValidator = new CrossValidator();

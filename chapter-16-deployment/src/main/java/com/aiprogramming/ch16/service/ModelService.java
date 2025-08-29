@@ -5,6 +5,7 @@ import com.aiprogramming.ch16.model.ClassificationModel;
 import com.aiprogramming.ch16.model.ModelStatus;
 import com.aiprogramming.ch16.model.ModelStats;
 import com.aiprogramming.ch16.repository.ModelRepository;
+import com.aiprogramming.utils.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class ModelService {
     public AIModel createModel(AIModel model) {
         logger.info("Creating new model: {}", model.getName());
         
+        ValidationUtils.validateNotNull(model, "model");
+        ValidationUtils.validateNotNull(model.getName(), "model.name");
+        ValidationUtils.validateNonEmptyString(model.getName(), "model.name");
+        
         // Generate unique model ID if not provided
         if (model.getModelId() == null || model.getModelId().isEmpty()) {
             model.setModelId(generateModelId());
@@ -56,6 +61,8 @@ public class ModelService {
      */
     @Transactional(readOnly = true)
     public Optional<AIModel> getModelById(String modelId) {
+        ValidationUtils.validateNotNull(modelId, "modelId");
+        ValidationUtils.validateNonEmptyString(modelId, "modelId");
         return modelRepository.findByModelId(modelId);
     }
 
@@ -72,6 +79,7 @@ public class ModelService {
      */
     @Transactional(readOnly = true)
     public List<AIModel> getModelsByStatus(ModelStatus status) {
+        ValidationUtils.validateNotNull(status, "status");
         return modelRepository.findByStatus(status);
     }
 
@@ -88,6 +96,10 @@ public class ModelService {
      */
     public AIModel updateModelStatus(String modelId, ModelStatus newStatus) {
         logger.info("Updating model {} status to: {}", modelId, newStatus);
+        
+        ValidationUtils.validateNotNull(modelId, "modelId");
+        ValidationUtils.validateNonEmptyString(modelId, "modelId");
+        ValidationUtils.validateNotNull(newStatus, "newStatus");
         
         Optional<AIModel> modelOpt = modelRepository.findByModelId(modelId);
         if (modelOpt.isEmpty()) {
@@ -116,6 +128,9 @@ public class ModelService {
      */
     public boolean deployModel(String modelId) {
         logger.info("Deploying model: {}", modelId);
+        
+        ValidationUtils.validateNotNull(modelId, "modelId");
+        ValidationUtils.validateNonEmptyString(modelId, "modelId");
         
         Optional<AIModel> modelOpt = modelRepository.findByModelId(modelId);
         if (modelOpt.isEmpty()) {
@@ -156,6 +171,9 @@ public class ModelService {
     public boolean undeployModel(String modelId) {
         logger.info("Undeploying model: {}", modelId);
         
+        ValidationUtils.validateNotNull(modelId, "modelId");
+        ValidationUtils.validateNonEmptyString(modelId, "modelId");
+        
         Optional<AIModel> modelOpt = modelRepository.findByModelId(modelId);
         if (modelOpt.isEmpty()) {
             logger.error("Model not found for undeployment: {}", modelId);
@@ -187,6 +205,9 @@ public class ModelService {
      */
     @Transactional(readOnly = true)
     public ModelStats getModelStats(String modelId) {
+        ValidationUtils.validateNotNull(modelId, "modelId");
+        ValidationUtils.validateNonEmptyString(modelId, "modelId");
+        
         Optional<AIModel> modelOpt = modelRepository.findByModelId(modelId);
         if (modelOpt.isEmpty()) {
             throw new IllegalArgumentException("Model not found: " + modelId);
@@ -200,8 +221,8 @@ public class ModelService {
             return classificationModel.getModelStats();
         }
         
-        // Return basic stats for other model types
-        return new ModelStats(0, 0.0, System.currentTimeMillis(), model.getAccuracy());
+        // For other model types, return basic stats
+        return new ModelStats(0, 0.0, System.currentTimeMillis(), null);
     }
 
     /**

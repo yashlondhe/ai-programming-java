@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Quantum-Inspired Optimization Algorithm

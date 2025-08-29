@@ -1,6 +1,8 @@
 package com.aiprogramming.ch18;
 
 import java.util.*;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Feature selection using various methods
@@ -48,7 +50,7 @@ public class FeatureSelector {
             for (int j = 0; j < features.length; j++) {
                 featureValues[j] = features[j][i];
             }
-            correlations[i] = Math.abs(calculateCorrelation(featureValues, targets));
+            correlations[i] = Math.abs(StatisticsUtils.correlation(featureValues, targets));
         }
         
         // Select top features
@@ -204,28 +206,7 @@ public class FeatureSelector {
         return selected;
     }
     
-    /**
-     * Calculate correlation between two arrays
-     */
-    private double calculateCorrelation(double[] x, double[] y) {
-        double meanX = Arrays.stream(x).average().orElse(0.0);
-        double meanY = Arrays.stream(y).average().orElse(0.0);
-        
-        double numerator = 0.0;
-        double sumXSquared = 0.0;
-        double sumYSquared = 0.0;
-        
-        for (int i = 0; i < x.length; i++) {
-            double xDiff = x[i] - meanX;
-            double yDiff = y[i] - meanY;
-            numerator += xDiff * yDiff;
-            sumXSquared += xDiff * xDiff;
-            sumYSquared += yDiff * yDiff;
-        }
-        
-        double denominator = Math.sqrt(sumXSquared * sumYSquared);
-        return denominator == 0 ? 0 : numerator / denominator;
-    }
+
     
     /**
      * Calculate mutual information (simplified version)
@@ -233,7 +214,7 @@ public class FeatureSelector {
     private double calculateMutualInformation(double[] x, double[] y) {
         // Simplified mutual information calculation
         // In practice, this would use histogram-based estimation
-        return Math.abs(calculateCorrelation(x, y));
+        return Math.abs(StatisticsUtils.correlation(x, y));
     }
     
     /**

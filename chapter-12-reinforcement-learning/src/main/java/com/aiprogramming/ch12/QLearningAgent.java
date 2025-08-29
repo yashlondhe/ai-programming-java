@@ -1,6 +1,8 @@
 package com.aiprogramming.ch12;
 
 import java.util.Random;
+import com.aiprogramming.utils.MatrixUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Q-Learning agent implementation
@@ -36,9 +38,11 @@ public class QLearningAgent extends Agent {
     }
     
     private void initializeQTable() {
+        // Use MatrixUtils to initialize Q-table with zeros
+        double[][] zeros = MatrixUtils.zeros(stateSize, actionSize);
         for (int state = 0; state < stateSize; state++) {
             for (int action = 0; action < actionSize; action++) {
-                qTable[state][action] = 0.0;
+                qTable[state][action] = zeros[state][action];
             }
         }
     }

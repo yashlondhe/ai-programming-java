@@ -1,6 +1,8 @@
 package com.aiprogramming.ch12;
 
 import java.util.Arrays;
+import com.aiprogramming.utils.StatisticsUtils;
+import com.aiprogramming.utils.ValidationUtils;
 
 /**
  * Comprehensive example demonstrating reinforcement learning algorithms
