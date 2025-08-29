@@ -294,6 +294,6 @@ Ready to begin? Start with [Chapter 1: Introduction to AI](chapter-01-introducti
 
 ---
 
-*Last updated: December 2024*
+*Last updated: 29 August 2025*
 *Book version: 1.0*
 *Java compatibility: 17+*
